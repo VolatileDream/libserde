@@ -5,6 +5,19 @@
 #include <stdint.h>
 #include <stdio.h>
 
+//
+// Lib serde
+//
+// All functions return true _on failure_, so that they can
+// be chained together as:
+//
+// > bool fail = false;
+// > fail = fail || serde_write(...);
+// > fail = fail || serde_write(...);
+// > fail = fail || serde_write(...);
+// > return !fail; // ie: success
+
+
 // read_/Write signed data.
 
 bool serde_write_8(FILE *f, int8_t i);
