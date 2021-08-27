@@ -4,3 +4,5 @@
 /.gitignore
 /libserde.a
 /libserde.o
+/serde_test.o
+/test_serde
