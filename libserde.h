@@ -5,40 +5,26 @@
 #include <stdint.h>
 #include <stdio.h>
 
-//
 // Lib serde
 //
-// All functions return true _on failure_, so that they can
-// be chained together as:
+// All functions return true on success,
+// so that they can be chained together as:
 //
-// > bool fail = false;
-// > fail = fail || serde_write(...);
-// > fail = fail || serde_write(...);
-// > fail = fail || serde_write(...);
-// > return !fail; // ie: success
-
-
-// read_/Write signed data.
-
-bool serde_write_8(FILE *f, int8_t i);
-bool serde_write_16(FILE *f, int16_t i);
-bool serde_write_32(FILE *f, int32_t i);
-bool serde_write_64(FILE *f, int64_t i);
-bool serde_read_8(FILE *f, int8_t *i);
-bool serde_read_16(FILE *f, int16_t *i);
-bool serde_read_32(FILE *f, int32_t *i);
-bool serde_read_64(FILE *f, int64_t *i);
-
-// read_/Write unsigned data.
-
-bool serde_write_u8(FILE *f, uint8_t i);
-bool serde_write_u16(FILE *f, uint16_t i);
-bool serde_write_u32(FILE *f, uint32_t i);
-bool serde_write_u64(FILE *f, uint64_t i);
-bool serde_read_u8(FILE *f, uint8_t *i);
-bool serde_read_u16(FILE *f, uint16_t *i);
-bool serde_read_u32(FILE *f, uint32_t *i);
-bool serde_read_u64(FILE *f, uint64_t *i);
+// > bool ok = true;
+// > ok = ok && serde_write(...);
+// > ok = ok && serde_write(...);
+// > ok = ok && serde_write(...);
+// > return ok; // ie: success
+//
+// Prefer using `serde_read` and `serde_write` over raw type functions.
+//
+// This library provides the following macros for convenience:
+//  * serde_start - defines boolean
+//  * serde_do
+//    - conditionally executed based on serde error status
+//    - invokes the correct read/write function based on variable type
+//  * serde_error - check for error
+//  * serde_return - return the serde success state
 
 #define serde_read(fp, var) \
     _Generic((var),\
@@ -65,13 +51,34 @@ bool serde_read_u64(FILE *f, uint64_t *i);
     )(fp, var)
 
 
-#define serde_start() bool serde_fail = false
-
-#define serde_return() return !serde_fail;
+#define serde_start() bool serde_ok = true
+#define serde_return() return serde_ok;
+#define serde_error() (!serde_ok)
 
 #define serde_do(rw, filep, var) \
-    (serde_fail = serde_fail || serde_##rw(filep, var))
+    (serde_ok = serde_ok && serde_##rw(filep, var))
 
-#define serde_failure() (serde_fail)
+// read/write signed data.
+
+bool serde_write_8(FILE *f, int8_t i);
+bool serde_write_16(FILE *f, int16_t i);
+bool serde_write_32(FILE *f, int32_t i);
+bool serde_write_64(FILE *f, int64_t i);
+bool serde_read_8(FILE *f, int8_t *i);
+bool serde_read_16(FILE *f, int16_t *i);
+bool serde_read_32(FILE *f, int32_t *i);
+bool serde_read_64(FILE *f, int64_t *i);
+
+// read/write unsigned data.
+
+bool serde_write_u8(FILE *f, uint8_t i);
+bool serde_write_u16(FILE *f, uint16_t i);
+bool serde_write_u32(FILE *f, uint32_t i);
+bool serde_write_u64(FILE *f, uint64_t i);
+bool serde_read_u8(FILE *f, uint8_t *i);
+bool serde_read_u16(FILE *f, uint16_t *i);
+bool serde_read_u32(FILE *f, uint32_t *i);
+bool serde_read_u64(FILE *f, uint64_t *i);
+
 
 #endif /* __LIB_SERDE__ */

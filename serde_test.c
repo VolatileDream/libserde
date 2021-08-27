@@ -14,6 +14,15 @@
     }                               \
   } while (0)
 
+#define NO_ERR(expr)                        \
+  do {                                      \
+    bool __val = (expr);                    \
+    (void) __val;                           \
+    if (serde_error()) {                    \
+      mu_assert_error("error: %s", #expr);  \
+      goto cleanup;                         \
+    }                                       \
+  } while (0)
 
 mu_test(generics_supported_and_correct) {
   char buf[1024] = {0};
@@ -31,15 +40,15 @@ mu_test(generics_supported_and_correct) {
   uint64_t two_fiftythree = 1ll << 53;
 
   serde_start();
-  serde_do(write, mem, three);
-  serde_do(write, mem, two_twelve);
-  serde_do(write, mem, two_twentythree);
-  serde_do(write, mem, two_fourtyfour);
-  serde_do(write, mem, seven);
-  serde_do(write, mem, two_fourteen);
-  serde_do(write, mem, two_nineteen);
-  serde_do(write, mem, two_fiftythree);
-  if (serde_failure()) {
+  NO_ERR(serde_do(write, mem, three));
+  NO_ERR(serde_do(write, mem, two_twelve));
+  NO_ERR(serde_do(write, mem, two_twentythree));
+  NO_ERR(serde_do(write, mem, two_fourtyfour));
+  NO_ERR(serde_do(write, mem, seven));
+  NO_ERR(serde_do(write, mem, two_fourteen));
+  NO_ERR(serde_do(write, mem, two_nineteen));
+  NO_ERR(serde_do(write, mem, two_fiftythree));
+  if (serde_error()) {
     mu_assert_error("Failed to write out data.");
     goto cleanup;
   }
@@ -56,15 +65,15 @@ mu_test(generics_supported_and_correct) {
   uint16_t got_two_fourteen = 0;
   uint32_t got_two_nineteen = 0;
   uint64_t got_two_fiftythree = 0;
-  serde_do(read, mem, &got_three);
-  serde_do(read, mem, &got_two_twelve);
-  serde_do(read, mem, &got_two_twentythree);
-  serde_do(read, mem, &got_two_fourtyfour);
-  serde_do(read, mem, &got_seven);
-  serde_do(read, mem, &got_two_fourteen);
-  serde_do(read, mem, &got_two_nineteen);
-  serde_do(read, mem, &got_two_fiftythree);
-  if (serde_failure()) {
+  NO_ERR(serde_do(read, mem, &got_three));
+  NO_ERR(serde_do(read, mem, &got_two_twelve));
+  NO_ERR(serde_do(read, mem, &got_two_twentythree));
+  NO_ERR(serde_do(read, mem, &got_two_fourtyfour));
+  NO_ERR(serde_do(read, mem, &got_seven));
+  NO_ERR(serde_do(read, mem, &got_two_fourteen));
+  NO_ERR(serde_do(read, mem, &got_two_nineteen));
+  NO_ERR(serde_do(read, mem, &got_two_fiftythree));
+  if (serde_error()) {
     mu_assert_error("Failed to read data back.");
     goto cleanup;
   }
