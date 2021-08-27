@@ -7,25 +7,6 @@
 // Handle endian conversion.
 #include <byteswap.h>
 #include <endian.h>
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-// Little Endian
-#define htobe64(x) bswap_64(x)
-#define htobe32(x) bswap_32(x)
-#define htobe16(x) bswap_16(x)
-#define be16toh(x) bswap_16(x)
-#define be32toh(x) bswap_32(x)
-#define be64toh(x) bswap_64(x)
-
-#else
-// Big Endian
-#define htobe64(x) (x)
-#define htobe32(x) (x)
-#define htobe16(x) (x)
-#define be16toh(x) (x)
-#define be32toh(x) (x)
-#define be64toh(x) (x)
-
-#endif /* __BYTE_ORDER == __LITTLE_ENDIAN */
 
 bool serde_write_8(FILE *f, int8_t i) {
   return fwrite(&i, sizeof(int8_t), 1, f) != 1;
@@ -46,8 +27,9 @@ bool serde_read_8(FILE *f, int8_t *i) {
   size_t s = fread(i, sizeof(int8_t), 1, f);
   return s != 1;
 }
-bool serde_read_16(FILE *f, int8_t *i) {
+bool serde_read_16(FILE *f, int16_t *i) {
   size_t s = fread(i, sizeof(int16_t), 1, f);
+  *i = be16toh(*i);
   return s != 1;
 }
 bool serde_read_32(FILE *f, int32_t *i) {
@@ -80,8 +62,9 @@ bool serde_read_u8(FILE *f, uint8_t *i) {
   size_t s = fread(i, sizeof(uint8_t), 1, f);
   return s != 1;
 }
-bool serde_read_u16(FILE *f, uint8_t *i) {
+bool serde_read_u16(FILE *f, uint16_t *i) {
   size_t s = fread(i, sizeof(uint16_t), 1, f);
+  *i = be16toh(*i);
   return s != 1;
 }
 bool serde_read_u32(FILE *f, uint32_t *i) {
