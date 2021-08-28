@@ -1,5 +1,5 @@
 #include "libserde.h"
-#include "libs/c/minunit/minunit.h"
+#include "testing/minunit/minunit.h"
 
 #include <stdio.h>
 
