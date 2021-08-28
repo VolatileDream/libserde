@@ -28,6 +28,7 @@
 
 #define serde_read(fp, var) \
     _Generic((var),\
+        double*: serde_read_d,\
         uint8_t*: serde_read_u8,\
         uint16_t*: serde_read_u16,\
         uint32_t*: serde_read_u32,\
@@ -40,6 +41,7 @@
 
 #define serde_write(fp, var) \
     _Generic((var),\
+        double: serde_write_d,\
         uint8_t: serde_write_u8,\
         uint16_t: serde_write_u16,\
         uint32_t: serde_write_u32,\
@@ -80,5 +82,7 @@ bool serde_read_u16(FILE *f, uint16_t *i);
 bool serde_read_u32(FILE *f, uint32_t *i);
 bool serde_read_u64(FILE *f, uint64_t *i);
 
+bool serde_write_d(FILE *f, double i);
+bool serde_read_d(FILE *f, double *i);
 
 #endif /* __LIB_SERDE__ */

@@ -78,3 +78,16 @@ bool serde_read_u64(FILE *f, uint64_t *i) {
   return s == 1;
 }
 
+#include <stdc-predef.h>
+
+#ifdef __STDC_IEC_559__
+bool serde_write_d(FILE *f, double i) {
+  return fwrite(&i, sizeof(double), 1, f) == 1;
+}
+bool serde_read_d(FILE *f, double *i) {
+  size_t s = fread(i, sizeof(double), 1, f);
+  return s == 1;
+}
+#else
+#error libserde requires IEEE 775 floating point number support.
+#endif /*__STDC_IEC_559__ */
