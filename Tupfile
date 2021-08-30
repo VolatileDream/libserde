@@ -2,5 +2,4 @@
 include_rules
 
 : foreach *.c |> !cc |>
-: foreach lib*.o |> !lib |>
 : *.o |> !test |> test_serde
