@@ -1,5 +1,0 @@
-.gitignore
-include_rules
-
-: foreach *.c |> !cc |>
-: *.o |> !test |> test_serde
